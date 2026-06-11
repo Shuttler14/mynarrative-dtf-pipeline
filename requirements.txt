@@ -1,5 +1,5 @@
 # DTF Automation Dependencies
-# Install with: pip install -r requirements.txt
+# Optimized for Vercel serverless (500MB limit)
 
 # Core
 fastapi>=0.109.0
@@ -7,10 +7,9 @@ uvicorn>=0.27.0
 python-multipart>=0.0.6
 python-dotenv>=1.0.0
 
-# Image Processing
+# Image Processing (lightweight)
 Pillow>=10.2.0
-rembg>=2.0.50
-opencv-python-headless>=4.9.0.80
+numpy>=1.26.0
 
 # AI / ML
 openai>=1.12.0
@@ -25,6 +24,6 @@ reportlab>=4.0.9
 httpx>=0.26.0
 aiofiles>=23.2.1
 
-# Testing (dev)
-pytest>=8.0.0
-pytest-asyncio>=0.23.0
+# Heavy dependencies (optional - uncomment for full features)
+# rembg>=2.0.50  # Background removal (adds ~200MB with ML models)
+# opencv-python-headless>=4.9.0.80  # Not used in current code
