@@ -1,0 +1,13 @@
+.DS_Store
+.env
+.env.local
+.env.production
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+venv/
+.venv/
+*.egg-info/
+node_modules/
+.vercel/
