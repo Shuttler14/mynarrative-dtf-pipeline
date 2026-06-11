@@ -19,5 +19,5 @@
   "env": {
     "PYTHONPATH": "."
   },
-  "regions": ["blr1"]
+  "regions": ["sin1"]
 }
