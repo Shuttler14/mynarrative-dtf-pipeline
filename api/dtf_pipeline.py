@@ -50,15 +50,26 @@ bg_remover = BackgroundRemover()
 nesting_optimizer = NestingOptimizer()
 pdf_generator = PDFGenerator()
 
-# S3 Client
-s3_client = boto3.client(
-    's3',
-    aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
-    aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
-    region_name=os.getenv('AWS_REGION', 'ap-south-1')
-)
-
+# S3 Client (lazy initialization)
+s3_client = None
 S3_BUCKET = os.getenv('S3_BUCKET_NAME', 'mynarrative-dtf')
+
+
+def get_s3_client():
+    """Lazy initialize S3 client to avoid import-time errors"""
+    global s3_client
+    if s3_client is None:
+        try:
+            s3_client = boto3.client(
+                's3',
+                aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+                aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
+                region_name=os.getenv('AWS_REGION', 'ap-south-1')
+            )
+        except Exception as e:
+            print(f"Warning: Could not initialize S3 client: {e}")
+            s3_client = None
+    return s3_client
 
 
 class ShopifyWebhookPayload(BaseModel):
@@ -116,9 +127,13 @@ def verify_shopify_webhook(
 
 def download_design_from_s3(design_uuid: str, user_id: str) -> Optional[bytes]:
     """Download design image from S3"""
+    client = get_s3_client()
+    if not client:
+        print("Warning: S3 client not available")
+        return None
     try:
         key = f"designs/{user_id}/{design_uuid}.png"
-        response = s3_client.get_object(Bucket=S3_BUCKET, Key=key)
+        response = client.get_object(Bucket=S3_BUCKET, Key=key)
         return response['Body'].read()
     except ClientError as e:
         print(f"Error downloading design: {e}")
@@ -127,8 +142,12 @@ def download_design_from_s3(design_uuid: str, user_id: str) -> Optional[bytes]:
 
 def upload_to_s3(data: bytes, key: str, content_type: str = "image/png") -> Optional[str]:
     """Upload processed file to S3"""
+    client = get_s3_client()
+    if not client:
+        print("Warning: S3 client not available")
+        return None
     try:
-        s3_client.put_object(
+        client.put_object(
             Bucket=S3_BUCKET,
             Key=key,
             Body=data,
