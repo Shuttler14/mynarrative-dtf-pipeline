@@ -24,6 +24,7 @@ import os
 import json
 import hashlib
 import hmac
+import base64
 import time
 from datetime import datetime
 from typing import Optional, Dict, List, Any
@@ -119,10 +120,13 @@ def verify_shopify_webhook(
         hashlib.sha256
     ).digest()
 
-    return hmac.compare_digest(
-        generated_hmac.hex(),
-        hmac_header
-    )
+    # Shopify sends base64-encoded HMAC
+    try:
+        decoded_hmac = base64.b64decode(hmac_header)
+        return hmac.compare_digest(generated_hmac, decoded_hmac)
+    except Exception:
+        # Fallback: try hex comparison
+        return hmac.compare_digest(generated_hmac.hex(), hmac_header)
 
 
 def download_design_from_s3(design_uuid: str, user_id: str) -> Optional[bytes]:
