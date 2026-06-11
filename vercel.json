@@ -2,28 +2,22 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/*.py",
+      "src": "api/dtf_pipeline.py",
       "use": "@vercel/python"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "api/$1"
+      "dest": "api/dtf_pipeline.py"
     },
     {
       "src": "/(.*)",
-      "dest": "api/$1"
+      "dest": "api/dtf_pipeline.py"
     }
   ],
   "env": {
     "PYTHONPATH": "."
   },
-  "regions": ["blr1"],
-  "functions": {
-    "api/dtf_pipeline.py": {
-      "memory": 1024,
-      "timeout": 120
-    }
-  }
+  "regions": ["blr1"]
 }

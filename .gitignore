@@ -11,3 +11,4 @@ venv/
 *.egg-info/
 node_modules/
 .vercel/
+.vercel
