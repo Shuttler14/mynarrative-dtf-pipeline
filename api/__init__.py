@@ -1,8 +1,5 @@
 # DTF Automation API
 # Main entry point for Vercel deployment
 
-# Import the main app from dtf_pipeline
-from api.dtf_pipeline import app
-
-# For Vercel serverless
-handler = app
+# Note: The app is defined in dtf_pipeline.py
+# Vercel routes directly to dtf_pipeline.py, so no need to import here
